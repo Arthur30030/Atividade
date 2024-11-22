@@ -1,0 +1,106 @@
+import 'package:flutter/material.dart';
+
+void main() {
+  runApp(MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Calculadora IMC',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+      ),
+      home: IMCCalculator(),
+    );
+  }
+}
+
+class IMCCalculator extends StatefulWidget {
+  @override
+  _IMCCalculatorState createState() => _IMCCalculatorState();
+}
+
+class _IMCCalculatorState extends State<IMCCalculator> {
+  final _formKey = GlobalKey<FormState>();
+  final _pesoController = TextEditingController();
+  final _alturaController = TextEditingController();
+  String _resultado = '';
+
+  void _calcularIMC() {
+    final double peso = double.parse(_pesoController.text);
+    final double altura = double.parse(_alturaController.text);
+
+    final imc = peso / (altura * altura);
+
+    setState(() {
+      _resultado = 'Seu IMC é ${imc.toStringAsFixed(2)}';
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Calculadora IMC'),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Form(
+          key: _formKey,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[
+              TextFormField(
+                controller: _pesoController,
+                decoration: InputDecoration(
+                  labelText: 'Peso (kg)',
+                  border: OutlineInputBorder(),
+                ),
+                keyboardType: TextInputType.number,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Por favor, insira o peso';
+                  }
+                  return null;
+                },
+              ),
+              SizedBox(height: 20),
+              TextFormField(
+                controller: _alturaController,
+                decoration: InputDecoration(
+                  labelText: 'Altura (m)',
+                  border: OutlineInputBorder(),
+                ),
+                keyboardType: TextInputType.number,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Por favor, insira a altura';
+                  }
+                  return null;
+                },
+              ),
+              SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: () {
+                  if (_formKey.currentState!.validate()) {
+                    _calcularIMC();
+                  }
+                },
+                child: Text('Calcular IMC'),
+              ),
+              SizedBox(height: 20),
+              if (_resultado.isNotEmpty)
+                Text(
+                  _resultado,
+                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                  textAlign: TextAlign.center,
+                ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
